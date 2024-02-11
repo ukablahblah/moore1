@@ -5,6 +5,9 @@ from node import Node
 from newNode import newNode
 # from dataloader import dataloader
 
+from load_model import load_model
+from collections import defaultdict
+
 import dash
 import dash_cytoscape as cyto
 from dash import html, dcc
@@ -14,35 +17,20 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from dash.exceptions import PreventUpdate
 
-# Load data from pickle file
-with open('graph_dataset_5-25.pkl', 'rb') as file:
-    data = pickle.load(file)
-
-nodes_to_newNode = {}
-newNode_to_node = {}
-
-
-
-# Assuming you want to display the graph for the first node in the first graph
-selected_node = list(data[0])
+data = load_model()
 graph = data[0]
 
-for selected_node in data[0]:
-    if selected_node not in nodes_to_newNode:
-        new_node = newNode(selected_node)
-        nodes_to_newNode[selected_node] = new_node
-        newNode_to_node[new_node] = selected_node
 
 
 # Create nodes for all nodes in the graph
 node_elements = [
-    {'data': {'id': node.name, 'label': node.name}} for node in nodes_to_newNode.keys()
+    {'data': {'id': str(node), 'label': str(node)}} for node in graph.keys()
 ]
 
 
 # Create edges for the graph
 edge_elements = [
-    {'data': {'source': node.name, 'target': neighbor.name}} for node, neighbors in graph.items() for neighbor in neighbors
+    {'data': {'source': str(node), 'target': str(neighbor)}} for node, neighbors in graph.items() for neighbor in neighbors
 ]
 
 
@@ -111,26 +99,25 @@ def update_graph(n_clicks):
         raise PreventUpdate
 
     # Choose the next index, e.g., increment by 50
-    next_index = (n_clicks - 1) * 50
+    next_index = (n_clicks - 1) * 1
 
     # Check if the chosen index is within the data range
     if next_index < len(data):
-        # Clear existing nodes
-        nodes_to_newNode.clear()
-        newNode_to_node.clear()
+        # # Clear existing nodes
+        # nodes_to_newNode.clear()
+        # newNode_to_node.clear()
 
         # Update the graph with the new data
         graph = data[next_index]
 
         # Create nodes for all nodes in the graph
         node_elements = [
-            {'data': {'id': node.name, 'label': node.name}} for node in graph.keys()
+            {'data': {'id': str(node), 'label': str(node)}} for node in graph.keys()
         ]
 
         # Create edges for the graph
         edge_elements = [
-            {'data': {'source': node.name, 'target': neighbor.name}} for node, neighbors in graph.items() for neighbor
-            in neighbors
+            {'data': {'source': str(node), 'target': str(neighbor)}} for node, neighbors in graph.items() for neighbor in neighbors
         ]
 
         # Combine node and edge elements

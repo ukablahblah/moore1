@@ -1,2 +1,4 @@
 .vscode
 graph_dataset_5-25.pkl
+load_model.ipynb
+__pycache__
